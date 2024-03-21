@@ -116,7 +116,7 @@ class RISCVEIRB_Controller:
 def charger_fichier(path):
     if path.endswith('.hex'):
         with open(path, 'r') as file:
-            data = np.array([int(line.strip(), 16) for line in file])
+            data = np.array([int(line.strip().rstrip(','), 16) for line in file])
     else:
         print("Format de fichier non pris en charge.")
         return None
