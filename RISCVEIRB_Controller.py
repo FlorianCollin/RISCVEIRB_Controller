@@ -107,12 +107,71 @@ class RISCVEIRB_Controller:
                 for value in mem_data:
                     f.write(f'0x{int(value):08X},\n')
 
-    
-    
-#################################################################################################
-                        
-#################################################################################################
+    def cpu_run(self):
+        print("CPU RUN\n")
 
+    def cpu_execution(self):
+        self.mmio.write(0x0,0b00000000000000000000000000100000) # BOOT <= 1
+        self.mmio.write(0x0,0b00000000000000000000000000000000) # BOOT <= 0
+        for i in range(0, 500, 1):
+            #Mode_debug  pour activé le CE : reg0(6)=1 & reg0(0)=1 => (0b00000000000000000000000001000001)
+            #Mode_normal pour activé Le CE : reg0(6)=0 & reg0(0)=1 => (0b00000000000000000000000000000001)
+            self.mmio.write(0x0,0b0000000000000000000000001000001)
+            self.mmio.write(0x0,0b0000000000000000000000001000000)
+            PC = self.mmio.read(0x10) # Sig_Adr_Inst_out
+            Current_Ins = self.mmio.read(0x14) # Sig_Val_Out_Inst_out
+            NextAdr_Ins = self.mmio.read(0x18) # Sig_New_Adr_Inst_out
+            print("Program Counter (PC) value : ", PC, "(",int(PC/4),"), Current Instruction :", hex(Current_Ins) ,", New Address Instruction :", NextAdr_Ins,"\r")
+            Mem_Data_Adr_Value = self.mmio.read(0x1C)
+            Data_in  = self.mmio.read(0x20) # Sig_Val_In_Data_out
+            Data_out = self.mmio.read(0x24) # Sig_Val_Out_Data_out
+            print("Mem Data Address value : ", int(Mem_Data_Adr_Value) ,", Data In : ",hex(Data_in),", Data Out:",hex(Data_out)," \r");
+            UAL_op = self.mmio.read(0x34)
+            print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r");
+            FSM_value = self.mmio.read(0x38)
+            match int(FSM_value):
+                case 0:
+                    print("Current State Machine is : Init\r")
+                case 1:
+                    print("Current State Machine is : FetchIns\r")
+                case 2: 
+                    print("Current State Machine is : Decode\r")
+                case 3: 
+                    print("Current State Machine is : ExeAddr\r")
+                case 4:
+                    print("Current State Machine is : ExeOp\r")
+                case 5:
+                    print("Current State Machine is : ExeOpimm \r")
+                case 6:
+                    print("Current State Machine is : ExeLoad \r")
+                case 7:
+                    print("Current State Machine is : ExeWrite\r")
+                case 8:
+                    print("Current State Machine is : ExeCtrr\r")
+                case 9:
+                    print("Current State Machine is : ExeJal\r")
+                case 10:
+                    print("Current State Machine is : ExeJal2\r")
+                case 11:
+                    print("Current State Machine is : ExeJalr\r")
+                case 12:
+                    print("Current State Machine is : Undefined\r\n\n")
+                case 13:
+                    print("Current State Machine is : ExeLui\r")
+                case 14:
+                    print("Current State Machine is : ExeAuipc\r")
+                case 15:
+                    print("Current State Machine is : ExeNop\r")
+                case _ :
+                    print("Current State Machine is : Undefined\r\n\n")
+            Date_UT_value = self.mmio.read(0x3C)
+            print("Data in UT for Load Instruction",hex(Date_UT_value),",",bin(Date_UT_value),"\r\n")
+            
+
+
+    
+    
+## Fonctions utilitaires
 def charger_fichier(path):
     if path.endswith('.hex'):
         with open(path, 'r') as file:
