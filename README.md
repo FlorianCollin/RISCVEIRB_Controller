@@ -1,10 +1,24 @@
 # Documentation du Projet
 
 - [Documentation du Projet](#documentation-du-projet)
+  - [RISCVEIRB](#riscveirb)
   - [MMIO MEMO](#mmio-memo)
   - [CPU\_RISCV port mapping :](#cpu_riscv-port-mapping-)
   - [Component CPU\_RISCV](#component-cpu_riscv)
 
+## RISCVEIRB
+
+RISCVEIRB est un processeur rv32i développé par les étudiants de l'Enseirb Matmeca. Pour tester ce processeur, nous utilisons une carte de développement Pynq.
+
+Les cartes Pynq permettent la création d'overlays, ce qui nous permet de contrôler facilement un design (ici un CPU) depuis un langage tel que Python. Pour plus d'informations sur les cartes Pynq, consultez la [documentation Zynq](https://pynq.readthedocs.io/en/v2.4/getting_started.html).
+
+Ce projet est lié à un autre de mes projets : [RISCV-CORDIC-toolchain](https://github.com/FlorianCollin/RISCV-CORDIC-toolchain), qui étend le jeu d'instructions avec des instructions de calcul trigonométrique (CORDIC). Dans ce projet, vous trouverez le fichier shell `stohex.sh`, qui permet de créer facilement un programme (.hex) à charger dans la mémoire d'instruction.
+
+L'objectif de ce projet est de créer une couche logicielle (en Python) permettant de simplifier l'envoi de données sur les mémoires du processeur ainsi que leur lecture. De plus, nous pourrons lire des signaux préalablement créés pour le débogage.
+
+Le code Python repose principalement sur la classe MMIO. Pour en savoir plus sur MMIO, consultez la [documentation MMIO](https://pynq.readthedocs.io/en/v2.4/pynq_libraries/mmio.html).
+
+Dans ce dépôt, vous trouverez le fichier `RISCVEIRB_Controller.py`, des notebooks Jupyter, ainsi que des fichiers de test hexadécimaux pour tester la classe et le CPU.
 
 ## MMIO MEMO
 
