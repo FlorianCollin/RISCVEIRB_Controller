@@ -71,19 +71,19 @@ class RISCVEIRB_Controller:
         if (log_opt):
             now = datetime.datetime.now()
             time = now.strftime("%Y-%m-%d_%H-%M-%S-%f")  # Ajout de %f pour les microsecondes
-            log_file_name = "./"+time+file_name+extension
+            log_file_name = "./"+time+"_"+file_name+extension
             with open(log_file_name, 'w') as f:
                 for value in mem_instruction:
                     if (extension == ".txt"):
                         f.write(f'0x{int(value):X}\n')
                     elif (extension == ".hex"):
-                        f.write(f'{int(value):X}')
+                        f.write(f'0x{int(value):08X},\n')
                     else:
                         print("Error: extension must be .hex or .txt\n")
             
 
     
-    def read_data_mem(self, size = 32, log_opt = False, extension = ".txt"):
+    def read_data_mem(self, size = 32, log_opt = False, file_name = "data_mem", extension = ".hex"):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
         mem_data = np.zeros(size)
         CODE_RAM_SIZE = size
@@ -106,16 +106,31 @@ class RISCVEIRB_Controller:
         if (log_opt):
             now = datetime.datetime.now()
             time_extension = now.strftime("%Y-%m-%d_%H-%M-%S-%f")  # Ajout de %f pour les microsecondes
-            filename = "./"+time_extension+"mem_data"+extension
+            filename = "./"+time_extension+"_"+file_name+extension
             with open(filename, 'w') as f:
                 for value in mem_data:
                     if (extension == ".txt"):
-                        f.write(f'0x{value:X}\n')
+                        f.write(f'0x{int(value):X}\n')
                     elif (extension == ".hex"):
-                        f.write(f'{value:X}')
+                        f.write(f'0x{int(value):08X},\n')
                     else:
                         print("Error: extension must be .hex or .txt\n")
             
 
     
     
+#################################################################################################
+                        
+#################################################################################################
+
+def charger_fichier(path):
+    if path.endswith('.txt'):
+        with open(path, 'r') as file:
+            data = np.loadtxt(file)
+    elif path.endswith('.hex'):
+        with open(path, 'r') as file:
+            data = np.array([int(line.strip(), 16) for line in file])
+    else:
+        print("Format de fichier non pris en charge.")
+        return None
+    return data
