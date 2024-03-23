@@ -172,38 +172,55 @@ class RISCVEIRB_Controller:
             FSM_value = self.mmio.read(0x38)
             match int(FSM_value):
                 case 0:
+                    FSM_value_str = "Init"
                     print("Current State Machine is : Init\r")
                 case 1:
+                    FSM_value_str = "FetchIns"
                     print("Current State Machine is : FetchIns\r")
                 case 2: 
+                    FSM_value_str = "Decode"
                     print("Current State Machine is : Decode\r")
-                case 3: 
+                case 3:
+                    FSM_value_str = "ExeAddr"
                     print("Current State Machine is : ExeAddr\r")
                 case 4:
+                    FSM_value_str = "ExeOp"
                     print("Current State Machine is : ExeOp\r")
                 case 5:
+                    FSM_value_str = "ExeOpimm"
                     print("Current State Machine is : ExeOpimm \r")
                 case 6:
+                    FSM_value_str = "ExeLoad"
                     print("Current State Machine is : ExeLoad \r")
                 case 7:
+                    FSM_value_str = "ExeWrite"
                     print("Current State Machine is : ExeWrite\r")
                 case 8:
+                    FSM_value_str = "ExeCtrr"
                     print("Current State Machine is : ExeCtrr\r")
                 case 9:
+                    FSM_value_str = "ExeJal"
                     print("Current State Machine is : ExeJal\r")
                 case 10:
-                    print("Current State Machine is : ExeJal2\r")
+                    FSM_value_str = "ExeJalr2"
+                    print("Current State Machine is : ExeJalr2\r")
                 case 11:
+                    FSM_value_str = "ExeJalr"
                     print("Current State Machine is : ExeJalr\r")
                 case 12:
+                    FSM_value_str = "Undefined"
                     print("Current State Machine is : Undefined\r\n\n")
                 case 13:
+                    FSM_value_str = "ExeLui"
                     print("Current State Machine is : ExeLui\r")
                 case 14:
+                    FSM_value_str = "ExeAuipc"
                     print("Current State Machine is : ExeAuipc\r")
                 case 15:
+                    FSM_value_str = "ExeNop"
                     print("Current State Machine is : ExeNop\r")
                 case _ :
+                    FSM_value_str = "Error"
                     print("Current State Machine is : Undefined\r\n\n")
             Date_UT_value = self.mmio.read(0x3C)
             print("Data in UT for Load Instruction",hex(Date_UT_value),",",bin(Date_UT_value),"\r\n")
@@ -220,7 +237,7 @@ class RISCVEIRB_Controller:
                 # file.write("Sig_Jr_Adr_out          :",+"\n")
                 # file.write("Sig_br_jal_adr_out      :",+"\n")
                 # file.write("Sig_sel_func_ALU_out    :"+UAL_op+"\n")
-                file.write("Sig_FSM_state_out       :"+str(FSM_value)+"\n")
+                file.write("Sig_FSM_state_out       :"+str(FSM_value)+" "+FSM_value_str+"\n")
                 file.write("Sig_Val_Mem_Data_depth  :"+str(Date_UT_value)+"\n")
                 file.write("\n\n")
         if (log_opt == 1):
