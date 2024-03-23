@@ -1,17 +1,51 @@
 from pynq import MMIO
 import numpy as np
 import datetime
+from time import sleep
 import os
 
 class RISCVEIRB_Controller:
 
+    # MMIO REG (32 bits) ADDRESS_OFFSET 
+    SLV_REG0_ADDRESS_OFFSET                 = 0x00
+    SLV_REG1_ADDRESS_OFFSET                 = 0x04
+    SLV_REG2_ADDRESS_OFFSET                 = 0x08
+    VAL_MEM_ADDRESS_OFFSET                  = 0x0c
+    SIG_ADR_INST_OUT_ADDRESS_OFFSET         = 0x10
+    SIG_VAL_OUT_INST_OUT_ADDRESS_OFFSET     = 0x14
+    SIG_NEW_ADR_INST_OUT_ADDRESS_OFFSET     = 0x18
+    SIG_ADR_MEM_DATA_OUT_ADDRESS_OFFSET     = 0x1c
+    SIG_VAL_IN_DATA_OUT_ADDRESS_OFFSET      = 0x20
+    SIG_VAL_OUT_DATA_OUT_ADDRESS_OFFSET     = 0x24
+    SIG_JALR_ADR_OUT_ADDRESS_OFFSET         = 0x28
+    SIG_JR_ADR_OUT_ADDRESS_OFFSET           = 0x2c
+    SIG_BR_JAL_ADR_OUT_ADDRESS_OFFSET       = 0x30
+    SIG_SEL_FUNC_ALU_OUT_ADDRESS_OFFSET     = 0x34
+    SIG_FSM_STATE_OUT_ADDRESS_OFFSET        = 0x38
+    SIG_VAL_MEM_DATA_DEPTH_ADDRESS_OFFSET   = 0x3c
     
     def __init__(self, BASE_ADDRESS = 0x43C00000, ADDRESS_LENGTH = 0x64000):
         print("Création de la class RISCVEIRB_Controller")
         self.mmio = MMIO(BASE_ADDRESS, ADDRESS_LENGTH)
 
-
     ########## METHODES ##########
+                
+    def slv_reg0_creat(self, CE = 0, Inst_Boot = 0, Data_Boot = 0, Inst_RW_Boot = 0, Data_RW_Boot = 0, Boot = 0, Val_Inst_In_boot = 0, Val_Data_In_Boot = 0):
+        # | Port                 | Largeur (bits) | Correspondance                   |
+        # | CE                   | 1              | slv_reg0(0)                      |
+        # | Inst_Boot            | 1              | slv_reg0(1)                      |
+        # | Data_Boot            | 1              | slv_reg0(2)                      |
+        # | Inst_RW_Boot         | 1              | slv_reg0(3)                      |
+        # | Data_RW_Boot         | 1              | slv_reg0(4)                      |
+        # | Boot                 | 1              | slv_reg0(5)                      |
+        # | Val_Inst_In_boot     | 8              | slv_reg0(23 downto 16)           |
+        # | Val_Data_In_boot     | 8              | slv_reg0(31 downto 24)           |
+        if (CE > 1 or Inst_Boot > 1 or Data_Boot > 1 or Inst_RW_Boot > 0 or Data_RW_Boot > 0 or Boot > 0 or Val_Inst_In_boot > 2**8-1 or Val_Data_In_Boot > 2**8-1):
+            print("Error : slv_reg0_creat\n")
+        slv_reg0 = 0
+        slv_reg0 = CE + (Inst_Boot << 1) + (Data_Boot << 2) + (Inst_RW_Boot << 3) + (Data_RW_Boot << 4) + (Boot << 5) + (Val_Inst_In_boot << 16) + (Val_Data_In_Boot << 24)
+        print("slv_reg0 :", bin(slv_reg0))
+        return slv_reg0
         
     ## WRITE ##
 
@@ -110,7 +144,14 @@ class RISCVEIRB_Controller:
     def cpu_run(self):
         print("CPU RUN\n")
 
-    def cpu_execution(self):
+    def cpu_execution(self, log_opt = False):
+        # Création du fichier log
+        if (log_opt == True):
+            now = datetime.datetime.now()
+            time_extension = now.strftime("%Y-%m-%d_%H-%M-%S-%f")  # Ajout de %f pour les microsecondes
+            filename = "./log/"+time_extension+"_execution.txt"
+            file = open(filename, 'w')
+        
         self.mmio.write(0x0,0b00000000000000000000000000100000) # BOOT <= 1
         self.mmio.write(0x0,0b00000000000000000000000000000000) # BOOT <= 0
         for i in range(0, 500, 1):
@@ -166,11 +207,36 @@ class RISCVEIRB_Controller:
                     print("Current State Machine is : Undefined\r\n\n")
             Date_UT_value = self.mmio.read(0x3C)
             print("Data in UT for Load Instruction",hex(Date_UT_value),",",bin(Date_UT_value),"\r\n")
-            
+            ################## LOG ########################################################
+            if (log_opt == 1):
+                file.write("---------------\ " , i , " \---------------\n")
+                file.write("Sig_Adr_Inst_out        :", PC, "\n")
+                file.write("Sig_Val_Out_Inst_out    :", Current_Ins, "\n")
+                file.write("Sig_New_Adr_Inst_out    :", NextAdr_Ins, "\n")
+                file.write("Sig_Adr_Mem_Data_out    :", Mem_Data_Adr_Value, "\n")
+                file.write("Sig_Val_In_Data_out     :", Data_in, "\n")
+                file.write("Sig_Val_Out_Data_out    :", Data_out, "\n")
+                # file.write("Sig_Jalr_Adr_out        :",, "\n")
+                # file.write("Sig_Jr_Adr_out          :",, "\n")
+                # file.write("Sig_br_jal_adr_out      :",, "\n")
+                # file.write("Sig_sel_func_ALU_out    :", UAL_op, "\n")
+                file.write("Sig_FSM_state_out       :", FSM_value, "\n")
+                file.write("Sig_Val_Mem_Data_depth  :", Date_UT_value, "\n")
+                file.write("\n\n")
+        if (log_opt == 1):
+            file.close()
 
 
-    
-    
+
+    def cpu_run(self):
+        self.mmio.write(0x0,0b00000000000000000000000000100000) # BOOT <= 1
+        self.mmio.write(0x0,0b00000000000000000000000000000000) # BOOT <= 0 
+        self.mmio.write(0x0,0b0000000000000000000000000000001)
+        sleep(2)
+        self.mmio.write(0x0,0b0000000000000000000000000000001)
+
+
+ 
 ## Fonctions utilitaires
 def charger_fichier(path):
     if path.endswith('.hex'):

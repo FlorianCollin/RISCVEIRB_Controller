@@ -22,24 +22,24 @@ Dans ce dépôt, vous trouverez le fichier `RISCVEIRB_Controller.py`, des notebo
 
 ## MMIO MEMO
 
-| loc_addr | addr_off(MMIO) | cpu_riscv_port (32 bits) |
-| -------- | -------------- | ------------------------ |
-| b"0000"  | 0x00           | slv_reg0                 |
-| b"0001"  | 0x04           | slv_reg1                 |
-| b"0010"  | 0x08           | slv_reg2                 |
-| b"0011"  | 0x0c           | val_mem                  |
-| b"0100"  | 0x10           | Sig_Adr_Inst_out         |
-| b"0101"  | 0x14           | Sig_Val_Out_Inst_out     |
-| b"0110"  | 0x18           | Sig_New_Adr_Inst_out     |
-| b"0111"  | 0x1c           | Sig_Adr_Mem_Data_out     |
-| b"1000"  | 0x20           | Sig_Val_In_Data_out      |
-| b"1001"  | 0x24           | Sig_Val_Out_Data_out     |
-| b"1010"  | 0x28           | Sig_Jalr_Adr_out         |
-| b"1011"  | 0x2c           | Sig_Jr_Adr_out           |
-| b"1100"  | 0x30           | Sig_br_jal_adr_out       |
-| b"1101"  | 0x34           | Sig_sel_func_ALU_out     |
-| b"1110"  | 0x38           | Sig_FSM_state_out        |
-| b"1111"  | 0x3c           | Sig_Val_Mem_Data_depth   |
+| addr_off(MMIO) | cpu_riscv_port (32 bits) |
+| -------------- | ------------------------ |
+| 0x00           | slv_reg0                 |
+| 0x04           | slv_reg1                 |
+| 0x08           | slv_reg2                 |
+| 0x0c           | val_mem                  |
+| 0x10           | Sig_Adr_Inst_out         |
+| 0x14           | Sig_Val_Out_Inst_out     |
+| 0x18           | Sig_New_Adr_Inst_out     |
+| 0x1c           | Sig_Adr_Mem_Data_out     |
+| 0x20           | Sig_Val_In_Data_out      |
+| 0x24           | Sig_Val_Out_Data_out     |
+| 0x28           | Sig_Jalr_Adr_out         |
+| 0x2c           | Sig_Jr_Adr_out           |
+| 0x30           | Sig_br_jal_adr_out       |
+| 0x34           | Sig_sel_func_ALU_out     |
+| 0x38           | Sig_FSM_state_out        |
+| 0x3c           | Sig_Val_Mem_Data_depth   |
 
 
 
