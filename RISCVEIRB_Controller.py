@@ -227,17 +227,17 @@ class RISCVEIRB_Controller:
             ################## LOG ########################################################
             if (log_opt == 1):
                 file.write("---------------\ " +str(i) +" \---------------\n")
-                file.write("Sig_Adr_Inst_out        :"+str(PC)+"\n")
-                file.write("Sig_Val_Out_Inst_out    :"+str(Current_Ins)+"\n")
-                file.write("Sig_New_Adr_Inst_out    :"+str(NextAdr_Ins)+"\n")
-                file.write("Sig_Adr_Mem_Data_out    :"+str(Mem_Data_Adr_Value)+"\n")
-                file.write("Sig_Val_In_Data_out     :"+str(Data_in)+"\n")
-                file.write("Sig_Val_Out_Data_out    :"+str(Data_out)+"\n")
+                file.write("Sig_Adr_Inst_out        :"+str(hex(PC))+"\n")
+                file.write("Sig_Val_Out_Inst_out    :"+str(hex(Current_Ins))+"\n")
+                file.write("Sig_New_Adr_Inst_out    :"+str(hex(NextAdr_Ins))+"\n")
+                file.write("Sig_Adr_Mem_Data_out    :"+str(hex(Mem_Data_Adr_Value))+"\n")
+                file.write("Sig_Val_In_Data_out     :"+str(hex(Data_in))+"\n")
+                file.write("Sig_Val_Out_Data_out    :"+str(hex(Data_out))+"\n")
                 # file.write("Sig_Jalr_Adr_out        :",+"\n")
                 # file.write("Sig_Jr_Adr_out          :",+"\n")
                 # file.write("Sig_br_jal_adr_out      :",+"\n")
                 # file.write("Sig_sel_func_ALU_out    :"+UAL_op+"\n")
-                file.write("Sig_FSM_state_out       :"+str(FSM_value)+" "+FSM_value_str+"\n")
+                file.write("Sig_FSM_state_out       :"+str(int(FSM_value))+" "+FSM_value_str+"\n")
                 file.write("Sig_Val_Mem_Data_depth  :"+str(Date_UT_value)+"\n")
                 file.write("\n\n")
         if (log_opt == 1):
@@ -251,6 +251,9 @@ class RISCVEIRB_Controller:
         self.mmio.write(0x0,0b0000000000000000000000000000001)
         sleep(2)
         self.mmio.write(0x0,0b0000000000000000000000000000001)
+    
+    def doc(self):
+        print("https://github.com/FlorianCollin/RISCVEIRB_Controller")
 
 
  
