@@ -55,6 +55,7 @@ Dans ce dépôt, vous trouverez le fichier `RISCVEIRB_Controller.py`, des notebo
 | Inst_RW_Boot         | 1              | slv_reg0(3)                      |
 | Data_RW_Boot         | 1              | slv_reg0(4)                      |
 | Boot                 | 1              | slv_reg0(5)                      |
+| Debug                | 1              | slv_reg0(6)                      |
 | Val_Inst_In_boot     | 8              | slv_reg0(23 downto 16)           |
 | Val_Data_In_boot     | 8              | slv_reg0(31 downto 24)           |
 | Adr_Inst_boot        | 32             | slv_reg1                         |
@@ -88,6 +89,7 @@ component CPU_RISCV is
            Reset             : in STD_LOGIC;
            CE                : in STD_LOGIC;
            boot              : in STD_LOGIC;
+           Debug             : in STD_LOGIC;
            Inst_Boot         : in STD_LOGIC;
            Data_Boot         : in STD_LOGIC;
            Inst_RW_Boot      : in STD_LOGIC;

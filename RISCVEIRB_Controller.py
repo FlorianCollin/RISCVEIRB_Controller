@@ -5,7 +5,6 @@ from time import sleep
 import os
 
 class RISCVEIRB_Controller:
-
     # MMIO REG (32 bits) ADDRESS_OFFSET 
     SLV_REG0_ADDRESS_OFFSET                 = 0x00
     SLV_REG1_ADDRESS_OFFSET                 = 0x04
