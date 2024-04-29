@@ -5,6 +5,7 @@ from time import sleep
 import os
 
 class RISCVEIRB_Controller:
+
     # MMIO REG (32 bits) ADDRESS_OFFSET 
     SLV_REG0_ADDRESS_OFFSET                 = 0x00
     SLV_REG1_ADDRESS_OFFSET                 = 0x04
@@ -24,7 +25,7 @@ class RISCVEIRB_Controller:
     SIG_VAL_MEM_DATA_DEPTH_ADDRESS_OFFSET   = 0x3c
     
     def __init__(self, BASE_ADDRESS = 0x43C00000, ADDRESS_LENGTH = 0x64000):
-        print("Création de la class RISCVEIRB_Controller")
+        print("new instance of RISCVEIRB_Controller")
         self.mmio = MMIO(BASE_ADDRESS, ADDRESS_LENGTH)
 
     ########## METHODES ##########
@@ -48,10 +49,11 @@ class RISCVEIRB_Controller:
         
     ## WRITE ##
 
-    def write_inst_mem_from_tab(self, mem_instruction, size = 32):
+    def write_inst_mem_from_tab(self, mem_instruction, size = 32, print_opt = True):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
         CODE_RAM_SIZE = size
-        print("\nInstruction Memory Write Process\n\r")
+        if print_opt:
+            print("\nInstruction Memory Write Process\n\r")
         for i in range(0, CODE_RAM_SIZE, 1):
             # Envoie octets par octets
             for j in range (0, 4, 1):
@@ -61,7 +63,8 @@ class RISCVEIRB_Controller:
                 # Ecriture dans la mémoire octets par octets
                 self.mmio.write(0x04, adresse)
                 self.mmio.write(0x00, int(data_ins))
-            print("Octet value Write for current Instruction",hex(mem_instruction[i]),"at address", i,": [",hex(tableauOctets[3]),";",hex(tableauOctets[2]),";",hex(tableauOctets[1]),";",hex(tableauOctets[0]),"]")
+            if print_opt:
+                print("Octet value Write for current Instruction",hex(mem_instruction[i]),"at address", i,": [",hex(tableauOctets[3]),";",hex(tableauOctets[2]),";",hex(tableauOctets[1]),";",hex(tableauOctets[0]),"]")
 
     def write_data_mem_from_tab(self, mem_data, size = 32):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
@@ -98,7 +101,7 @@ class RISCVEIRB_Controller:
                 data_ins_rd = (tableauOctets[3] << 24) + (tableauOctets[2] << 16) + (tableauOctets[1] << 8) + (tableauOctets[0]) 
             if (data_ins_rd < 0) : 
                 data_ins_rd = (data_ins_rd + (1<<32))
-            print("La valeur de l'instruction", i," est :", hex(data_ins_rd))
+            print("Inst(", i,") = ", hex(data_ins_rd))
             mem_instruction[i] = data_ins_rd
          # Enregistrement dans un fichier log    
         if (log_opt):
@@ -108,16 +111,16 @@ class RISCVEIRB_Controller:
             with open(log_file_name, 'w') as f:
                 for value in mem_instruction:
                     f.write(f'0x{int(value):08X},\n')
-                   
-            
+        return mem_instruction
 
     
-    def read_data_mem(self, size = 32, log_opt = False, file_name = "data_mem"):
+    def read_data_mem(self, size = 32, log_opt = False, file_name = "data_mem", print_opt = True):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
-        mem_data = np.zeros(size)
+        mem_data = np.zeros(size, dtype = int)
         CODE_RAM_SIZE = size
         #Data Memory Read Process  
-        print("\nInstruction Memory Read Process\n\r")
+        if print_opt:
+            print("\nInstruction Memory Read Process\n\r")
         for i in range(0, CODE_RAM_SIZE, 1):
             for j in range (0, 4, 1):
                 # Data_RW_Boot <= 0 (READ)
@@ -130,7 +133,8 @@ class RISCVEIRB_Controller:
             if (data_val_rd  < 0) : 
                 data_val_rd  = (data_val_rd  + (1<<32))
             mem_data[i] = int(data_val_rd)
-            print("La valeur de la donnée", i," est :", hex(data_val_rd))
+            if print_opt:
+                print("MEM(", i,") = ", hex(data_val_rd))
         # Enregistrement dans un fichier log    
         if (log_opt):
             now = datetime.datetime.now()
@@ -139,11 +143,11 @@ class RISCVEIRB_Controller:
             with open(filename, 'w') as f:
                 for value in mem_data:
                     f.write(f'0x{int(value):08X},\n')
+        return mem_data
+               
+        
 
-    def cpu_run(self):
-        print("CPU RUN\n")
-
-    def cpu_execution(self, log_opt = False):
+    def cpu_execution(self, log_opt = False, print_opt = True):
         # Création du fichier log
         if (log_opt == True):
             now = datetime.datetime.now()
@@ -161,68 +165,73 @@ class RISCVEIRB_Controller:
             PC = self.mmio.read(0x10) # Sig_Adr_Inst_out
             Current_Ins = self.mmio.read(0x14) # Sig_Val_Out_Inst_out
             NextAdr_Ins = self.mmio.read(0x18) # Sig_New_Adr_Inst_out
-            print("Program Counter (PC) value : ", PC, "(",int(PC/4),"), Current Instruction :", hex(Current_Ins) ,", New Address Instruction :", NextAdr_Ins,"\r")
+            if print_opt:
+                print("Program Counter (PC) value : ", PC, "(",int(PC/4),"), Current Instruction :", hex(Current_Ins) ,", New Address Instruction :", NextAdr_Ins,"\r")
             Mem_Data_Adr_Value = self.mmio.read(0x1C)
             Data_in  = self.mmio.read(0x20) # Sig_Val_In_Data_out
             Data_out = self.mmio.read(0x24) # Sig_Val_Out_Data_out
-            print("Mem Data Address value : ", int(Mem_Data_Adr_Value) ,", Data In : ",hex(Data_in),", Data Out:",hex(Data_out)," \r");
+            if print_opt:
+                print("Mem Data Address value : ", int(Mem_Data_Adr_Value) ,", Data In : ",hex(Data_in),", Data Out:",hex(Data_out)," \r");
             UAL_op = self.mmio.read(0x34)
-            print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r");
+            if print_opt:
+                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r");
             FSM_value = self.mmio.read(0x38)
-            match int(FSM_value):
-                case 0:
-                    FSM_value_str = "Init"
-                    print("Current State Machine is : Init\r")
-                case 1:
-                    FSM_value_str = "FetchIns"
-                    print("Current State Machine is : FetchIns\r")
-                case 2: 
-                    FSM_value_str = "Decode"
-                    print("Current State Machine is : Decode\r")
-                case 3:
-                    FSM_value_str = "ExeAddr"
-                    print("Current State Machine is : ExeAddr\r")
-                case 4:
-                    FSM_value_str = "ExeOp"
-                    print("Current State Machine is : ExeOp\r")
-                case 5:
-                    FSM_value_str = "ExeOpimm"
-                    print("Current State Machine is : ExeOpimm \r")
-                case 6:
-                    FSM_value_str = "ExeLoad"
-                    print("Current State Machine is : ExeLoad \r")
-                case 7:
-                    FSM_value_str = "ExeWrite"
-                    print("Current State Machine is : ExeWrite\r")
-                case 8:
-                    FSM_value_str = "ExeCtrr"
-                    print("Current State Machine is : ExeCtrr\r")
-                case 9:
-                    FSM_value_str = "ExeJal"
-                    print("Current State Machine is : ExeJal\r")
-                case 10:
-                    FSM_value_str = "ExeJalr2"
-                    print("Current State Machine is : ExeJalr2\r")
-                case 11:
-                    FSM_value_str = "ExeJalr"
-                    print("Current State Machine is : ExeJalr\r")
-                case 12:
-                    FSM_value_str = "Undefined"
-                    print("Current State Machine is : Undefined\r\n\n")
-                case 13:
-                    FSM_value_str = "ExeLui"
-                    print("Current State Machine is : ExeLui\r")
-                case 14:
-                    FSM_value_str = "ExeAuipc"
-                    print("Current State Machine is : ExeAuipc\r")
-                case 15:
-                    FSM_value_str = "ExeNop"
-                    print("Current State Machine is : ExeNop\r")
-                case _ :
-                    FSM_value_str = "Error"
-                    print("Current State Machine is : Undefined\r\n\n")
+            if print_opt:
+                match int(FSM_value):
+                    case 0:
+                        FSM_value_str = "Init"
+                        print("Current State Machine is : Init\r")
+                    case 1:
+                        FSM_value_str = "FetchIns"
+                        print("Current State Machine is : FetchIns\r")
+                    case 2: 
+                        FSM_value_str = "Decode"
+                        print("Current State Machine is : Decode\r")
+                    case 3:
+                        FSM_value_str = "ExeAddr"
+                        print("Current State Machine is : ExeAddr\r")
+                    case 4:
+                        FSM_value_str = "ExeOp"
+                        print("Current State Machine is : ExeOp\r")
+                    case 5:
+                        FSM_value_str = "ExeOpimm"
+                        print("Current State Machine is : ExeOpimm \r")
+                    case 6:
+                        FSM_value_str = "ExeLoad"
+                        print("Current State Machine is : ExeLoad \r")
+                    case 7:
+                        FSM_value_str = "ExeWrite"
+                        print("Current State Machine is : ExeWrite\r")
+                    case 8:
+                        FSM_value_str = "ExeCtrr"
+                        print("Current State Machine is : ExeCtrr\r")
+                    case 9:
+                        FSM_value_str = "ExeJal"
+                        print("Current State Machine is : ExeJal\r")
+                    case 10:
+                        FSM_value_str = "ExeJalr2"
+                        print("Current State Machine is : ExeJalr2\r")
+                    case 11:
+                        FSM_value_str = "ExeJalr"
+                        print("Current State Machine is : ExeJalr\r")
+                    case 12:
+                        FSM_value_str = "Undefined"
+                        print("Current State Machine is : Undefined\r\n\n")
+                    case 13:
+                        FSM_value_str = "ExeLui"
+                        print("Current State Machine is : ExeLui\r")
+                    case 14:
+                        FSM_value_str = "ExeAuipc"
+                        print("Current State Machine is : ExeAuipc\r")
+                    case 15:
+                        FSM_value_str = "ExeNop"
+                        print("Current State Machine is : ExeNop\r")
+                    case _ :
+                        FSM_value_str = "Error"
+                        print("Current State Machine is : Undefined\r\n\n")
             Date_UT_value = self.mmio.read(0x3C)
-            print("Data in UT for Load Instruction",hex(Date_UT_value),",",bin(Date_UT_value),"\r\n")
+            if print_opt:
+                print("Data in UT for Load Instruction",hex(Date_UT_value),",",bin(Date_UT_value),"\r\n")
             ################## LOG ########################################################
             if (log_opt == 1):
                 file.write("---------------\ " +str(i) +" \---------------\n")
@@ -253,6 +262,40 @@ class RISCVEIRB_Controller:
     
     def doc(self):
         print("https://github.com/FlorianCollin/RISCVEIRB_Controller")
+        
+    def tb_all(self, print_opt = False):
+        self.tb("./tb/tb0", print_opt = print_opt)
+        self.tb("./tb/tb1", print_opt = print_opt)
+        
+    def tb(self, tb_name, print_opt = False):
+        print("TB : ", tb_name)
+        inst_mem = charger_fichier(tb_name + ".hex")
+        self.write_inst_mem_from_tab(inst_mem, inst_mem.size, print_opt = print_opt)
+        self.cpu_execution(print_opt = print_opt)
+        data_mem = self.read_data_mem(print_opt = print_opt);
+        data_mem_check = charger_fichier(tb_name + "_mem.hex")
+        count = 0
+        for i in range(0, data_mem.size):
+            # print("data_mem[", i, "]       = ", int(data_mem[i]), "       = ", hex(data_mem[i]))
+            # print("data_mem_check[", i, "] = ", int(data_mem_check[i]), " = ", hex(data_mem_check[i]))
+            if (int(data_mem[i]) != int(data_mem_check[i])):
+                print(tb_name, "[", i, "]", " failed !")
+                print("data_mem[", i, "]       = ", hex(data_mem[i]))
+                print("data_mem_check[", i, "] = ", hex(data_mem_check[i]))
+                count += 1
+                
+        if (count == 0):
+            print(tb_name, " passed OK\n\n")
+            return True
+        else:
+            print(tb_name, " failed !!")
+            print(count, " error(s)")
+            return False
+         
+        
+        
+        
+        
 
 
  
