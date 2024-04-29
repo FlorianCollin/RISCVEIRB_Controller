@@ -158,15 +158,15 @@ component CPU_RISCV is
   -  Il s'agit d'une méthode interne.
 
 On retrouve différentes options de méthodes :
-- plot_opt pour activer ou non l'ecriture des commentaire sur la sortie standard
-- log_opt pour activer ou non l'écriture des commentaire dans un fichier log (/log).
+- plot_opt pour activer ou non l'ecriture des commentaires sur la sortie standard
+- log_opt pour activer ou non l'écriture des commentaires dans un fichier log (/log).
 
 Pout charger un fichier .hex en tableau numpy utiliser `charger_fichier(filename)`
 
 Pour rester cohérent avec la classe vous devez :
 - Créer un dossier (à la racine de jupyter) `/tb` pour les testbench (tbx.hex et tbx_mem.hex).
-- Créer un dossier `/log` pour ranger les logs produit par les méhtode de la classe RISCVERIB_Controller.
+- Créer un dossier `/log` pour ranger les logs produits par les méhtodes de la classe RISCVERIB_Controller.
 
-Nessitez pas à modifier la classe qui n'est pas parfaite, elle a cependant le mérite d'être un bon point de départ dans la création d'une classe de test pour notre processeur RISCVEIRB_Controller.
+N'hesitez pas à modifier la classe qui n'est pas parfaite, elle a cependant le mérite d'être un bon point de départ dans la création d'une classe de test pour notre processeur RISCVEIRB_Controller.
 
   
