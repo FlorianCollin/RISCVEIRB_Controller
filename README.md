@@ -5,7 +5,7 @@
   - [MMIO MEMO](#mmio-memo)
   - [CPU\_RISCV port mapping :](#cpu_riscv-port-mapping-)
   - [Component CPU\_RISCV](#component-cpu_riscv)
-  - [Documentation de la classe RISCVEIRB\_Controller](#documentation-de-la-classe-riscveirb_controller)
+  - [Documentation de la classe RISCVEIRB\_Controller (liste des méhtodes)](#documentation-de-la-classe-riscveirb_controller-liste-des-méhtodes)
 
 ## RISCVEIRB
 
@@ -119,14 +119,8 @@ component CPU_RISCV is
 
 ``` 
 
-<!-- ## Non utilisés :
-```vhdl
-constant cst16    : std_logic_vector(15 downto 0) := x"ABCD";
-val_mem(15 downto 0) <= cst16;
-Sig_sel_func_ALU_out(31 downto 4) <= "0000000000000000000000000000";
-Sig_FSM_state_out(31 downto 5)    <= "000000000000000000000000000";
-```  -->
-## Documentation de la classe RISCVEIRB_Controller
+
+## Documentation de la classe RISCVEIRB_Controller (liste des méhtodes)
 
 - `__init__(BASE_ADDRESS=0x43C00000, ADDRESS_LENGTH=0x64000)`: 
   - Constructeur de la classe 
@@ -162,4 +156,17 @@ Sig_FSM_state_out(31 downto 5)    <= "000000000000000000000000000";
 - `slv_reg0_creat(CE, Inst_Boot, Data_Boot, Inst_RW_Boot, Data_RW_Boot, Boot, Val_Inst_In_boot, Val_Data_In_Boot)`:
   -  Crée la valeur pour le registre de contrôle slv_reg0.
   -  Il s'agit d'une méthode interne.
+
+On retrouve différentes options de méthodes :
+- plot_opt pour activer ou non l'ecriture des commentaire sur la sortie standard
+- log_opt pour activer ou non l'écriture des commentaire dans un fichier log (/log).
+
+Pout charger un fichier .hex en tableau numpy utiliser `charger_fichier(filename)`
+
+Pour rester cohérent avec la classe vous devez :
+- Créer un dossier (à la racine de jupyter) `/tb` pour les testbench (tbx.hex et tbx_mem.hex).
+- Créer un dossier `/log` pour ranger les logs produit par les méhtode de la classe RISCVERIB_Controller.
+
+Nessitez pas à modifier la classe qui n'est pas parfaite, elle a cependant le mérite d'être un bon point de départ dans la création d'une classe de test pour notre processeur RISCVEIRB_Controller.
+
   
