@@ -128,31 +128,36 @@ component CPU_RISCV is
   
 - `write_inst_mem_from_tab(mem_instruction, size=32)`:
   -  Écrit dans la mémoire d'instructions à partir d'un tableau. (numpy)
+  -  Pour charger un fichier dans un tableau numpy, utiliser `charger_fichi`r`
   
 - `write_data_mem_from_tab(mem_data, size=32)`:
   -  Écrit dans la mémoire de données à partir d'un tableau. (numpy)
   
-- `read_inst_mem(size=32, log_opt=False, file_name="inst_mem")`:
+- `read_inst_mem(size=32, log_opt=True, file_name="inst_mem")`:
   -  Lit la mémoire d'instructions.
   
-- `read_data_mem(size=32, log_opt=False, file_name="data_mem")`:
+- `read_data_mem(size=32, log_opt=True, file_name="data_mem")`:
   -  Lit la mémoire de données.
   
-- `cpu_execution(log_opt=False)`:
-       - 'Exécute'le processeur.
+- `cpu_execution(log_opt=True)`:
+  - 'Exécute'le processeur.
 
-- `cpu_run()`: 
+- `cpu_run(time = 2)`: 
   - Lance l'exécution du processeur.
+  - Par défault le cpu tourne pendant 2 secondes
   
 - `doc()`:
-  - Affiche la documentation du module.
+  - Affiche la documentation du module. (lien vers github)
   
 - `tb_all()`: 
-  - Exécute les tests benchmarck. (ne pas utiliser autrement que pour du débugage)
+  - Exécute les tests benchmarck. **Ne pas utiliser autrement que pour du débugage !**
   
 - `tb(tb_name)`: 
   - Exécute un test benchmarck spécifique.
-  - exemple : tb("../tb/tbcos", plot_opt = True)
+  - exemple : tb("../tb/tbcos", plot_opt = True) NE PAS METTRE L'EXTENSION DE FICHIER (.hex)
+  -** ATTENTION : Il faut respecter le formalisme imposer par la fonciton**, exemple de structure :
+    - tbx.hex
+    - tbx_mem.hex
 
 - `slv_reg0_creat(CE, Inst_Boot, Data_Boot, Inst_RW_Boot, Data_RW_Boot, Boot, Val_Inst_In_boot, Val_Data_In_Boot)`:
   -  Crée la valeur pour le registre de contrôle slv_reg0.

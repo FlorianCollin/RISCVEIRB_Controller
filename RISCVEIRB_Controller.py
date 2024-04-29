@@ -253,11 +253,11 @@ class RISCVEIRB_Controller:
 
 
 
-    def cpu_run(self):
+    def cpu_run(self, time = 2):
         self.mmio.write(0x0,0b00000000000000000000000000100000) # BOOT <= 1
         self.mmio.write(0x0,0b00000000000000000000000000000000) # BOOT <= 0 
         self.mmio.write(0x0,0b0000000000000000000000000000001)
-        sleep(2)
+        sleep(time)
         self.mmio.write(0x0,0b0000000000000000000000000000001)
     
     def doc(self):
