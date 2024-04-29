@@ -163,7 +163,7 @@ On retrouve différentes options de méthodes :
 
 Pout charger un fichier .hex en tableau numpy utiliser `charger_fichier(filename)`
 
-Pour rester cohérent avec la classe vous devez :
+**Pour rester cohérent avec la classe vous devez :**
 - Créer un dossier (à la racine de jupyter) `/tb` pour les testbench (tbx.hex et tbx_mem.hex).
 - Créer un dossier `/log` pour ranger les logs produits par les méhtodes de la classe RISCVERIB_Controller.
 
