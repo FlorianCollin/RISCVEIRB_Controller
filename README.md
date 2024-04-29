@@ -152,6 +152,7 @@ component CPU_RISCV is
   
 - `tb(tb_name)`: 
   - Exécute un test benchmarck spécifique.
+  - exemple : tb("../tb/tbcos", plot_opt = True)
 
 - `slv_reg0_creat(CE, Inst_Boot, Data_Boot, Inst_RW_Boot, Data_RW_Boot, Boot, Val_Inst_In_boot, Val_Data_In_Boot)`:
   -  Crée la valeur pour le registre de contrôle slv_reg0.

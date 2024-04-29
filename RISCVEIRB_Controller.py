@@ -83,7 +83,7 @@ class RISCVEIRB_Controller:
 
     ## READ ##
 
-    def read_inst_mem(self, size = 32, log_opt = False, file_name = "inst_mem"):
+    def read_inst_mem(self, size = 32, log_opt = True, file_name = "inst_mem"):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
         mem_instruction = np.zeros(size)
         CODE_RAM_SIZE = size
@@ -114,7 +114,7 @@ class RISCVEIRB_Controller:
         return mem_instruction
 
     
-    def read_data_mem(self, size = 32, log_opt = False, file_name = "data_mem", print_opt = True):
+    def read_data_mem(self, size = 32, log_opt = True, file_name = "data_mem", print_opt = True):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
         mem_data = np.zeros(size, dtype = int)
         CODE_RAM_SIZE = size
@@ -147,7 +147,7 @@ class RISCVEIRB_Controller:
                
         
 
-    def cpu_execution(self, log_opt = False, print_opt = True):
+    def cpu_execution(self, log_opt = True, print_opt = True):
         # Création du fichier log
         if (log_opt == True):
             now = datetime.datetime.now()
