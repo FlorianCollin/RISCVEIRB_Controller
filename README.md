@@ -140,7 +140,7 @@ component CPU_RISCV is
   -  Lit la mémoire de données.
   
 - `cpu_execution(log_opt=True)`:
-  - 'Exécute'le processeur.
+  - Exécute le processeur.
 
 - `cpu_run(time = 2)`: 
   - Lance l'exécution du processeur.
@@ -150,12 +150,12 @@ component CPU_RISCV is
   - Affiche la documentation du module. (lien vers github)
   
 - `tb_all()`: 
-  - Exécute les tests benchmarck. **Ne pas utiliser autrement que pour du débugage !**
+  - Exécute les tests benchmarck. Ne pas utiliser autrement que pour du débugage !
   
 - `tb(tb_name)`: 
   - Exécute un test benchmarck spécifique.
   - exemple : tb("../tb/tbcos", plot_opt = True) NE PAS METTRE L'EXTENSION DE FICHIER (.hex)
-  -** ATTENTION : Il faut respecter le formalisme imposer par la fonciton**, exemple de structure :
+  - ATTENTION : Il faut respecter le formalisme imposer par la fonciton**, exemple de structure :
     - tbx.hex
     - tbx_mem.hex
 
