@@ -5,6 +5,7 @@
   - [MMIO MEMO](#mmio-memo)
   - [CPU\_RISCV port mapping :](#cpu_riscv-port-mapping-)
   - [Component CPU\_RISCV](#component-cpu_riscv)
+  - [Documentation de la classe RISCVEIRB\_Controller](#documentation-de-la-classe-riscveirb_controller)
 
 ## RISCVEIRB
 
@@ -125,3 +126,40 @@ val_mem(15 downto 0) <= cst16;
 Sig_sel_func_ALU_out(31 downto 4) <= "0000000000000000000000000000";
 Sig_FSM_state_out(31 downto 5)    <= "000000000000000000000000000";
 ```  -->
+## Documentation de la classe RISCVEIRB_Controller
+
+- `__init__(BASE_ADDRESS=0x43C00000, ADDRESS_LENGTH=0x64000)`: 
+  - Constructeur de la classe 
+  - Initialise une nouvelle instance de RISCVEIRB_Controller.
+  
+- `write_inst_mem_from_tab(mem_instruction, size=32)`:
+  -  Écrit dans la mémoire d'instructions à partir d'un tableau. (numpy)
+  
+- `write_data_mem_from_tab(mem_data, size=32)`:
+  -  Écrit dans la mémoire de données à partir d'un tableau. (numpy)
+  
+- `read_inst_mem(size=32, log_opt=False, file_name="inst_mem")`:
+  -  Lit la mémoire d'instructions.
+  
+- `read_data_mem(size=32, log_opt=False, file_name="data_mem")`:
+  -  Lit la mémoire de données.
+  
+- `cpu_execution(log_opt=False)`:
+       - 'Exécute'le processeur.
+
+- `cpu_run()`: 
+  - Lance l'exécution du processeur.
+  
+- `doc()`:
+  - Affiche la documentation du module.
+  
+- `tb_all()`: 
+  - Exécute les tests benchmarck. (ne pas utiliser autrement que pour du débugage)
+  
+- `tb(tb_name)`: 
+  - Exécute un test benchmarck spécifique.
+
+- `slv_reg0_creat(CE, Inst_Boot, Data_Boot, Inst_RW_Boot, Data_RW_Boot, Boot, Val_Inst_In_boot, Val_Data_In_Boot)`:
+  -  Crée la valeur pour le registre de contrôle slv_reg0.
+  -  Il s'agit d'une méthode interne.
+  
