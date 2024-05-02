@@ -6,6 +6,7 @@
   - [CPU\_RISCV port mapping :](#cpu_riscv-port-mapping-)
   - [Component CPU\_RISCV](#component-cpu_riscv)
   - [Documentation de la classe RISCVEIRB\_Controller (liste des méhtodes)](#documentation-de-la-classe-riscveirb_controller-liste-des-méhtodes)
+  - [Modificaiton de l'overlay ISSUE](#modificaiton-de-loverlay-issue)
 
 ## RISCVEIRB
 
@@ -175,4 +176,11 @@ Pout charger un fichier .hex en tableau numpy utiliser `charger_fichier(filename
 
 N'hesitez pas à modifier la classe qui n'est pas parfaite, elle a cependant le mérite d'être un bon point de départ dans la création d'une classe de test pour notre processeur RISCVEIRB_Controller.
 
-  
+
+
+## Modificaiton de l'overlay ISSUE
+
+Vous devez placez vos fichier .hwh et .bit dans le dossier : /home/xilinx/pynq/overlays, si jamais vous n'arrivez pas à accéder à ce fichier vous pouvez téleverser vos fichiers depuis jupiter dans un dossier overlays et executer la commande shell : `cp -r /home/xilinx/jupyter_notebooks/overlays/CORDIC/*`. dans un terminal jupyter (new > Terminal).
+
+Vous pouvez par exemple alors écrire : Proc_RISCV = Overlay('/home/xilinx/pynq/overlays/CORDIC/My_RISCVEIRB.bit')
+dans votre notebook jupyter.

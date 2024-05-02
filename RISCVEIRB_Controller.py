@@ -226,6 +226,9 @@ class RISCVEIRB_Controller:
                     case 15:
                         FSM_value_str = "ExeNop"
                         print("Current State Machine is : ExeNop\r")
+                    case 16:
+                        FSM_value_str = "ExeCordic"
+                        print("Current State Machine is : ExeCordic\r")
                     case _ :
                         FSM_value_str = "Error"
                         print("Current State Machine is : Undefined\r\n\n")
