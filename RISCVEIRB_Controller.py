@@ -58,7 +58,7 @@ class RISCVEIRB_Controller:
             # Envoie octets par octets
             for j in range (0, 4, 1):
                 adresse = (4 * i) + j
-                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256;
+                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256
                 data_ins = ((0 << 24) + (tableauOctets[j] << 16) + 0b0000000000001010); # Inst_Boot & Inst_RW_Boot
                 # Ecriture dans la mémoire octets par octets
                 self.mmio.write(0x04, adresse)
@@ -74,16 +74,16 @@ class RISCVEIRB_Controller:
             for j in range (0, 4, 1):
                 temp = (j  * 8)
                 adresse = (4 * i) + j
-                tableauOctets[j]  = (mem_data[i]>> temp)%256;
-                data_val = (tableauOctets[j] << 24) + ((0 << 16) +  + 0b0000000000010100);
+                tableauOctets[j]  = (mem_data[i]>> temp)%256
+                data_val = (tableauOctets[j] << 24) + ((0 << 16) +  + 0b0000000000010100)
                 self.mmio.write(0x08, adresse)    
-                self.mmio.write(0x00, int(data_val))
+                self.mmio.write(0x00, data_val)
             print("Octet value Write for current Instruction",hex(mem_data[i]),"at address", i,": [",hex(tableauOctets[3]),";",hex(tableauOctets[2]),";",hex(tableauOctets[1]),";",hex(tableauOctets[0]),"]")
     
 
     ## READ ##
 
-    def read_inst_mem(self, size = 32, log_opt = True, file_name = "inst_mem"):
+    def read_inst_mem(self, size = 32, log_opt = True, file_name = "inst_mem", print_opt = True):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
         mem_instruction = np.zeros(size)
         CODE_RAM_SIZE = size
@@ -99,10 +99,11 @@ class RISCVEIRB_Controller:
                 self.mmio.write(0x04, adresse)
                 tableauOctets[j] = self.mmio.read(0xC)>>16
                 data_ins_rd = (tableauOctets[3] << 24) + (tableauOctets[2] << 16) + (tableauOctets[1] << 8) + (tableauOctets[0]) 
-            if (data_ins_rd < 0) : 
-                data_ins_rd = (data_ins_rd + (1<<32))
-            print("Inst(", i,") = ", hex(data_ins_rd))
+            #if (data_ins_rd < 0) : 
+            #    data_ins_rd = (data_ins_rd + (1<<32))
             mem_instruction[i] = data_ins_rd
+            if print_opt:
+                print("MEM({}) = {:08X}".format(i, data_ins_rd & 0xFFFFFFFF))  # Fix pour l'affichage sans le moins
          # Enregistrement dans un fichier log    
         if (log_opt):
             now = datetime.datetime.now()
@@ -110,13 +111,14 @@ class RISCVEIRB_Controller:
             log_file_name = "./log/"+time+"_"+file_name+".hex"
             with open(log_file_name, 'w') as f:
                 for value in mem_instruction:
-                    f.write(f'0x{int(value):08X},\n')
+                    fstring = "0x{:08X},\n".format(int(value) & 0xFFFFFFFF)
+                    f.write(fstring)
         return mem_instruction
 
     
     def read_data_mem(self, size = 32, log_opt = True, file_name = "data_mem", print_opt = True):
         tableauOctets = np.array([0x00, 0x00, 0x00, 0x00])
-        mem_data = np.zeros(size, dtype = int)
+        mem_data = np.zeros(size)
         CODE_RAM_SIZE = size
         #Data Memory Read Process  
         if print_opt:
@@ -130,11 +132,11 @@ class RISCVEIRB_Controller:
                 self.mmio.write(0x08, adresse)
                 tableauOctets[j] = self.mmio.read(0xC)>>24
             data_val_rd = (tableauOctets[3] << 24) + (tableauOctets[2] << 16) + (tableauOctets[1] << 8) + (tableauOctets[0]) 
-            if (data_val_rd  < 0) : 
-                data_val_rd  = (data_val_rd  + (1<<32))
-            mem_data[i] = int(data_val_rd)
+            #if (data_val_rd  < 0) : 
+                #data_val_rd  = (data_val_rd  + (1<<32))
+            mem_data[i] = data_val_rd
             if print_opt:
-                print("MEM(", i,") = ", hex(data_val_rd))
+                print("MEM({}) = {:08X}".format(i, data_val_rd & 0xFFFFFFFF))  # Fix pour l'affichage sans le moins
         # Enregistrement dans un fichier log    
         if (log_opt):
             now = datetime.datetime.now()
@@ -142,7 +144,8 @@ class RISCVEIRB_Controller:
             filename = "./log/"+time_extension+"_"+file_name+".hex"
             with open(filename, 'w') as f:
                 for value in mem_data:
-                    f.write(f'0x{int(value):08X},\n')
+                    fstring = "0x{:08X},\n".format(int(value) & 0xFFFFFFFF)
+                    f.write(fstring)
         return mem_data
                
         
@@ -174,7 +177,7 @@ class RISCVEIRB_Controller:
                 print("Mem Data Address value : ", int(Mem_Data_Adr_Value) ,", Data In : ",hex(Data_in),", Data Out:",hex(Data_out)," \r");
             UAL_op = self.mmio.read(0x34)
             if print_opt:
-                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r");
+                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r")
             FSM_value = self.mmio.read(0x38)
             if print_opt:
                 match int(FSM_value):
@@ -278,7 +281,7 @@ class RISCVEIRB_Controller:
         inst_mem = charger_fichier(tb_name + ".hex")
         self.write_inst_mem_from_tab(inst_mem, inst_mem.size, print_opt = print_opt)
         self.cpu_execution(print_opt = print_opt)
-        data_mem = self.read_data_mem(print_opt = print_opt);
+        data_mem = self.read_data_mem(print_opt = print_opt)
         data_mem_check = charger_fichier(tb_name + "_mem.hex")
         count = 0
         for i in range(0, data_mem.size):
