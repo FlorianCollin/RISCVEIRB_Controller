@@ -58,7 +58,7 @@ class RISCVEIRB_Controller:
             # Envoie octets par octets
             for j in range (0, 4, 1):
                 adresse = (4 * i) + j
-                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256
+                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256;
                 data_ins = ((0 << 24) + (tableauOctets[j] << 16) + 0b0000000000001010); # Inst_Boot & Inst_RW_Boot
                 # Ecriture dans la mémoire octets par octets
                 self.mmio.write(0x04, adresse)
@@ -74,8 +74,8 @@ class RISCVEIRB_Controller:
             for j in range (0, 4, 1):
                 temp = (j  * 8)
                 adresse = (4 * i) + j
-                tableauOctets[j]  = (mem_data[i]>> temp)%256
-                data_val = (tableauOctets[j] << 24) + ((0 << 16) +  + 0b0000000000010100)
+                tableauOctets[j]  = (mem_data[i]>> temp)%256;
+                data_val = (tableauOctets[j] << 24) + ((0 << 16) +  + 0b0000000000010100);
                 self.mmio.write(0x08, adresse)    
                 self.mmio.write(0x00, data_val)
             print("Octet value Write for current Instruction",hex(mem_data[i]),"at address", i,": [",hex(tableauOctets[3]),";",hex(tableauOctets[2]),";",hex(tableauOctets[1]),";",hex(tableauOctets[0]),"]")
@@ -131,10 +131,13 @@ class RISCVEIRB_Controller:
                 adresse = ((4 * i) + j)
                 self.mmio.write(0x08, adresse)
                 tableauOctets[j] = self.mmio.read(0xC)>>24
+    
             data_val_rd = (tableauOctets[3] << 24) + (tableauOctets[2] << 16) + (tableauOctets[1] << 8) + (tableauOctets[0]) 
-            #if (data_val_rd  < 0) : 
-                #data_val_rd  = (data_val_rd  + (1<<32))
+            # if (data_val_rd  < 0) : 
+                # data_val_rd  = (data_val_rd  + (1<<32))
+                
             mem_data[i] = data_val_rd
+            
             if print_opt:
                 print("MEM({}) = {:08X}".format(i, data_val_rd & 0xFFFFFFFF))  # Fix pour l'affichage sans le moins
         # Enregistrement dans un fichier log    
@@ -177,7 +180,7 @@ class RISCVEIRB_Controller:
                 print("Mem Data Address value : ", int(Mem_Data_Adr_Value) ,", Data In : ",hex(Data_in),", Data Out:",hex(Data_out)," \r");
             UAL_op = self.mmio.read(0x34)
             if print_opt:
-                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r")
+                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r");
             FSM_value = self.mmio.read(0x38)
             if print_opt:
                 match int(FSM_value):
@@ -281,16 +284,16 @@ class RISCVEIRB_Controller:
         inst_mem = charger_fichier(tb_name + ".hex")
         self.write_inst_mem_from_tab(inst_mem, inst_mem.size, print_opt = print_opt)
         self.cpu_execution(print_opt = print_opt)
-        data_mem = self.read_data_mem(print_opt = print_opt)
+        data_mem = self.read_data_mem(print_opt = print_opt);
         data_mem_check = charger_fichier(tb_name + "_mem.hex")
         count = 0
         for i in range(0, data_mem.size):
             # print("data_mem[", i, "]       = ", int(data_mem[i]), "       = ", hex(data_mem[i]))
             # print("data_mem_check[", i, "] = ", int(data_mem_check[i]), " = ", hex(data_mem_check[i]))
-            if (int(data_mem[i]) != int(data_mem_check[i])):
+            if ((int(data_mem[i]) & 0xFFFFFFFF) != (int(data_mem_check[i]) & 0xFFFFFFFF)):
                 print(tb_name, "[", i, "]", " failed !")
-                print("data_mem[", i, "]       = ", hex(data_mem[i]))
-                print("data_mem_check[", i, "] = ", hex(data_mem_check[i]))
+                print("data_mem[{}]= {:08X}\n".format(i, data_mem[i] & 0xFFFFFFFF))
+                print("data_mem_check[{}]= {:08X}\n".format(i, data_mem_check[i] & 0xFFFFFFFF))
                 count += 1
                 
         if (count == 0):
