@@ -58,7 +58,7 @@ class RISCVEIRB_Controller:
             # Envoie octets par octets
             for j in range (0, 4, 1):
                 adresse = (4 * i) + j
-                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256
+                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256;
                 data_ins = ((0 << 24) + (tableauOctets[j] << 16) + 0b0000000000001010); # Inst_Boot & Inst_RW_Boot
                 # Ecriture dans la mémoire octets par octets
                 self.mmio.write(0x04, adresse)
@@ -91,11 +91,16 @@ class RISCVEIRB_Controller:
         print("\nInstruction Memory Read Process\n\r")
         for i in range(0, CODE_RAM_SIZE, 1):
             for j in range (0, 4, 1):
+                # Sequence lecture
+                # Inst_RW_Boot <= 0 (READ)
+                # Inst_Boot <= 1 
                 self.mmio.write(0x00,0b00000000000000000000000000000010)
                 adresse = ((4 * i) + j)
                 self.mmio.write(0x04, adresse)
                 tableauOctets[j] = self.mmio.read(0xC)>>16
                 data_ins_rd = (tableauOctets[3] << 24) + (tableauOctets[2] << 16) + (tableauOctets[1] << 8) + (tableauOctets[0]) 
+            #if (data_ins_rd < 0) : 
+            #    data_ins_rd = (data_ins_rd + (1<<32))
             mem_instruction[i] = data_ins_rd
             if print_opt:
                 print("MEM({}) = {:08X}".format(i, data_ins_rd & 0xFFFFFFFF))  # Fix pour l'affichage sans le moins
@@ -148,7 +153,7 @@ class RISCVEIRB_Controller:
                
         
 
-    def cpu_execution(self, log_opt = True, print_opt = True):
+    def cpu_execution(self, log_opt = True, print_opt = True, cycle = 500):
         # Création du fichier log
         if (log_opt == True):
             now = datetime.datetime.now()
@@ -158,7 +163,7 @@ class RISCVEIRB_Controller:
         
         self.mmio.write(0x0,0b00000000000000000000000000100000) # BOOT <= 1
         self.mmio.write(0x0,0b00000000000000000000000000000000) # BOOT <= 0
-        for i in range(0, 500, 1):
+        for i in range(0, cycle, 1):
             #Mode_debug  pour activé le CE : reg0(6)=1 & reg0(0)=1 => (0b00000000000000000000000001000001)
             #Mode_normal pour activé Le CE : reg0(6)=0 & reg0(0)=1 => (0b00000000000000000000000000000001)
             self.mmio.write(0x0,0b0000000000000000000000001000001)
@@ -175,7 +180,7 @@ class RISCVEIRB_Controller:
                 print("Mem Data Address value : ", int(Mem_Data_Adr_Value) ,", Data In : ",hex(Data_in),", Data Out:",hex(Data_out)," \r");
             UAL_op = self.mmio.read(0x34)
             if print_opt:
-                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r")
+                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r");
             FSM_value = self.mmio.read(0x38)
             if print_opt:
                 match int(FSM_value):
@@ -274,11 +279,11 @@ class RISCVEIRB_Controller:
         self.tb("./tb/tb0", print_opt = print_opt)
         self.tb("./tb/tb1", print_opt = print_opt)
         
-    def tb(self, tb_name, print_opt = False):
+    def tb(self, tb_name, cycle = 500):
         print("TB : ", tb_name)
         inst_mem = charger_fichier(tb_name + ".hex")
         self.write_inst_mem_from_tab(inst_mem, inst_mem.size, print_opt = print_opt)
-        self.cpu_execution(print_opt = print_opt)
+        self.cpu_execution(print_opt = print_opt, cucle = cycle)
         data_mem = self.read_data_mem(print_opt = print_opt);
         data_mem_check = charger_fichier(tb_name + "_mem.hex")
         count = 0
