@@ -11,5 +11,5 @@ li t1, 0x01921fb5 # pi/2
 corcos x1, t0 # cos(pi) = -1
 sw x1, 0(x0)
 
-corsin x1, x0 # sin(pi/2) = 1
+corsin x1, x0 # sin(0) = 0
 sw x1, 4(x0)
