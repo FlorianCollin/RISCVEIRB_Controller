@@ -58,7 +58,7 @@ class RISCVEIRB_Controller:
             # Envoie octets par octets
             for j in range (0, 4, 1):
                 adresse = (4 * i) + j
-                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256;
+                tableauOctets[j]  = (mem_instruction[i] >> (j*8)) % 256
                 data_ins = ((0 << 24) + (tableauOctets[j] << 16) + 0b0000000000001010); # Inst_Boot & Inst_RW_Boot
                 # Ecriture dans la mémoire octets par octets
                 self.mmio.write(0x04, adresse)
@@ -91,16 +91,11 @@ class RISCVEIRB_Controller:
         print("\nInstruction Memory Read Process\n\r")
         for i in range(0, CODE_RAM_SIZE, 1):
             for j in range (0, 4, 1):
-                # Sequence lecture
-                # Inst_RW_Boot <= 0 (READ)
-                # Inst_Boot <= 1 
                 self.mmio.write(0x00,0b00000000000000000000000000000010)
                 adresse = ((4 * i) + j)
                 self.mmio.write(0x04, adresse)
                 tableauOctets[j] = self.mmio.read(0xC)>>16
                 data_ins_rd = (tableauOctets[3] << 24) + (tableauOctets[2] << 16) + (tableauOctets[1] << 8) + (tableauOctets[0]) 
-            #if (data_ins_rd < 0) : 
-            #    data_ins_rd = (data_ins_rd + (1<<32))
             mem_instruction[i] = data_ins_rd
             if print_opt:
                 print("MEM({}) = {:08X}".format(i, data_ins_rd & 0xFFFFFFFF))  # Fix pour l'affichage sans le moins
@@ -180,7 +175,7 @@ class RISCVEIRB_Controller:
                 print("Mem Data Address value : ", int(Mem_Data_Adr_Value) ,", Data In : ",hex(Data_in),", Data Out:",hex(Data_out)," \r");
             UAL_op = self.mmio.read(0x34)
             if print_opt:
-                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r");
+                print("UAL operation: ",bin(UAL_op),"->",int(UAL_op),"\r")
             FSM_value = self.mmio.read(0x38)
             if print_opt:
                 match int(FSM_value):
